@@ -2,10 +2,15 @@
 module.exports = {
   content: ["./src/**/*.{html,js}"],
   theme: {
+    screen: {
+      'md': '768px',
+      // => @media (min-width: 768px) { ... }
+    },
     extend: {
       colors: {
         'primary': '#FFD370',
         'secondary': '#333333',
+        'third':'#9F9A91',
       },
     },
     container: {
