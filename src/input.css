@@ -11,6 +11,7 @@
         #FFD370 53.44%,
         #FFFFFF 53.45%,
         #FFFFFF 94.32%);
+        background-repeat: no-repeat;
     };
     .box_shadow {
         box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
