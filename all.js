@@ -80,7 +80,7 @@ function init(){
     str = `<li class="flex items-center space-x-4 py-4 mx-6 border-b border-b-light_gray">
       <input type="checkbox" class="check w-5 h-5 rounded-md border border-secondary" name="check" id="">
       <p class="text-sm grow">${item.content}</p>
-      <input type="button" class="delete_event w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="">
+      <input type="button" class="delete_event w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="" id="${item.id}">
       </li>`
     str_all += str;
   })
@@ -148,9 +148,24 @@ js_filter.addEventListener("click",function(e){
 
 // 完成打勾
 
-// 一鍵刪除
+// 刪除指定資料
 js_list.addEventListener("click",function(e){
-  console.log(e.target);
-  
-
+  data.forEach(function(item){
+    if(e.target.type === "button"){
+      if(Number(e.target.getAttribute("id")) === item.id){
+        id = item.id;
+        delete_todo(id)
+      }
+    }
+  })
 })
+
+// 刪除全部資料
+// js_footer.addEventListener("click",function(e){
+//   data.forEach(function(item){
+//     if(e.target.type === "button"){
+//       id = item.id;
+//       delete_todo(id)
+//     }
+//   })
+// })
