@@ -9,19 +9,22 @@ let js_filter = document.querySelector(".js_filter");
 let js_btn = document.querySelector(".js_btn");
 let js_btn_true = document.querySelector(".js_btn_true");
 let js_btn_false = document.querySelector(".js_btn_false");
+let js_footer = document.querySelector(".js_footer");
+let js_finish = document.querySelector(".js_finish");
 
 let obj = {};
 let data = [];
 get_axios ();
+// let judge = e.target.getAttribute("finish");
 
 function get_axios (){
   axios
   .get("https://fathomless-brushlands-42339.herokuapp.com/todo1")
   .then(function (response) {
     data = response.data;
-    // console.log(response.data);
     callData();
     init();
+    js_finish = document.querySelector(".js_finish");
   });
 }
 
@@ -78,11 +81,18 @@ function init(){
   // 列表
   data.forEach(function(item){
     str = `<li class="flex items-center space-x-4 py-4 mx-6 border-b border-b-light_gray">
-      <input type="checkbox" class="check w-5 h-5 rounded-md border border-secondary" name="check" id="">
-      <p class="text-sm grow">${item.content}</p>
+      <input type="checkbox" class="w-5 h-5 rounded-md border border-secondary" name="check" finish="${item.finish}" id="${item.id}">
+      <p class="js_finish text-sm grow">${item.content}</p>
       <input type="button" class="delete_event w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="" id="${item.id}">
       </li>`
     str_all += str;
+
+    // 決定文字樣式
+    // if(item.finish === true){
+    //   console.log(1111);
+    //   console.log(item);
+    //   // js_finish.setAttribute("class","js_finish text-sm grow text-third line-through");
+    // }
   })
   js_list.innerHTML = str_all;
   // 左下角 total
@@ -112,10 +122,10 @@ js_filter.addEventListener("click",function(e){
   // console.log(e.target.value);
   data.forEach(function(item){
     str = `<li class="flex items-center space-x-4 py-4 mx-6 border-b border-b-light_gray">
-    <input type="checkbox" class="check w-5 h-5 rounded-md border border-secondary" name="check" id="">
-    <p class="text-sm grow">${item.content}</p>
-    <input type="button" class="delete_event w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="">
-    </li>`
+    <input type="checkbox" class="w-5 h-5 rounded-md border border-secondary" name="check" finish="${item.finish}" id="${item.id}">
+    <p class="js_finish text-sm grow">${item.content}</p>
+    <input type="button" class="delete_event w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="" id="${item.id}">
+    </li>`;
     if(e.target.value === "全部"){
       // btn 樣式
       js_btn.setAttribute("class","py-4 border-b-2 border-b-black w-full text-center text-secondary text-sm font-bold")
@@ -146,7 +156,40 @@ js_filter.addEventListener("click",function(e){
   js_list.innerHTML = str_all;
 })
 
+
+
 // 完成打勾
+js_list.addEventListener("click",function(e){
+  if(e.target.type === "checkbox"){
+    data.forEach(function(item){
+      let judge = e.target.getAttribute("finish") === 'false' ? false : true;
+
+      if(judge === item.finish){
+        if(Number(e.target.getAttribute("id")) === item.id){
+          item.finish = !item.finish;
+          let id = item.id;
+          updateData(id,item.finish);
+          
+        }
+      }
+    })
+  }
+})
+
+// 修改 axios (finish 狀態)
+function updateData (id,check){
+  // 為什麼使用這個函式時，沒有寫到 check 函式也可以動 (165行)
+  axios
+  .patch(`https://fathomless-brushlands-42339.herokuapp.com/todo1/${id}`, {
+    finish: check,
+  })
+  .then(function(response) {
+    get_axios();
+  })
+  .catch(function(error){
+    console.log(error);
+  })
+}
 
 // 刪除指定資料
 js_list.addEventListener("click",function(e){
@@ -162,10 +205,11 @@ js_list.addEventListener("click",function(e){
 
 // 刪除全部資料
 // js_footer.addEventListener("click",function(e){
-//   data.forEach(function(item){
-//     if(e.target.type === "button"){
-//       id = item.id;
-//       delete_todo(id)
-//     }
-//   })
+//   console.log(e.target.type);
+  // data.forEach(function(item){
+  //   if(e.target.type === "button"){
+  //     id = item.id;
+  //     delete_todo(id)
+  //   }
+  // })
 // })
