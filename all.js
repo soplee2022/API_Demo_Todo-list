@@ -1,8 +1,8 @@
 let add_text = document.querySelector(".add_text");
 let add_event = document.querySelector(".add_event");
-let check = document.querySelector(".check");
-let delete_event = document.querySelector(".delete_event");
-let delete_all = document.querySelector(".delete_all");
+// let check = document.querySelector(".check");
+// let delete_event = document.querySelector(".delete_event");
+// let delete_all = document.querySelector(".delete_all");
 let js_list = document.querySelector(".js_list");
 let js_total = document.querySelector(".js_total");
 let js_filter = document.querySelector(".js_filter");
@@ -15,91 +15,8 @@ let js_finish = document.querySelector(".js_finish");
 let obj = {};
 let data = [];
 get_axios ();
-// let judge = e.target.getAttribute("finish");
 
-function get_axios (){
-  axios
-  .get("https://fathomless-brushlands-42339.herokuapp.com/todo1")
-  .then(function (response) {
-    data = response.data;
-    callData();
-    init();
-    js_finish = document.querySelector(".js_finish");
-  });
-}
-
-function post_todo(obj){
-  axios
-  .post("https://fathomless-brushlands-42339.herokuapp.com/todo1",obj)
-  .then(function (response) {
-    get_axios()
-    callData();
-  });
-}
-
-function delete_todo(id){
-  axios
-  .delete(`https://fathomless-brushlands-42339.herokuapp.com/todo1/${id}`)
-  .then(function(response){
-    get_axios ();
-    // callData();
-  });
-}
-
-function callData() {
-  console.log(data);
-}
-
-// let myData = [
-//   {
-//     content: "今天天氣真好，準備去踏青", 
-//     id: "1",
-//     finish: true
-//   },
-//   {
-//     content: "生人無求，在家耍廢救世界", 
-//     id: "2",
-//     finish: false
-//   },
-//   {
-//     content: "快點寫作業，老師在你後面很火", 
-//     id: "3",
-//     finish: false
-//   },
-//   {
-//     content: "明天的力氣，今天幫你船便便", 
-//     id: "4",
-//     finish: false
-//   },
-// ];
-
-// init();
-// 初始化 -> 在 index 印出 data 中的項目
-
-function init(){
-  let str_all = "";
-  // 列表
-  data.forEach(function(item){
-    str = `<li class="flex items-center space-x-4 py-4 mx-6 border-b border-b-light_gray">
-      <input type="checkbox" class="w-5 h-5 rounded-md border border-secondary" name="check" finish="${item.finish}" id="${item.id}">
-      <p class="js_finish text-sm grow">${item.content}</p>
-      <input type="button" class="delete_event w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="" id="${item.id}">
-      </li>`
-    str_all += str;
-
-    // 決定文字樣式
-    // if(item.finish === true){
-    //   console.log(1111);
-    //   console.log(item);
-    //   // js_finish.setAttribute("class","js_finish text-sm grow text-third line-through");
-    // }
-  })
-  js_list.innerHTML = str_all;
-  // 左下角 total
-  js_total.textContent = `${data.length} 個待完成項目`
-}
-
-// 新增待辦事項
+// 監聽 => 新增待辦事項
 add_event.addEventListener("click",function(e){
     // 排除無效新增
     if(add_text.value === ""){
@@ -109,14 +26,14 @@ add_event.addEventListener("click",function(e){
       // 組成 obj -> push data -> 印在網頁上
       obj.content = add_text.value;
       obj.finish = false;
-      // obj.data_id = data.length+1;
       data.push(obj);
+      // obj 推上 json API
       post_todo(obj);
     }
     init();
   })
 
-// 篩選待辦事項
+// 監聽 => 篩選待辦事項
 js_filter.addEventListener("click",function(e){
   let str_all = "";
   // console.log(e.target.value);
@@ -124,7 +41,7 @@ js_filter.addEventListener("click",function(e){
     str = `<li class="flex items-center space-x-4 py-4 mx-6 border-b border-b-light_gray">
     <input type="checkbox" class="w-5 h-5 rounded-md border border-secondary" name="check" finish="${item.finish}" id="${item.id}">
     <p class="js_finish text-sm grow">${item.content}</p>
-    <input type="button" class="delete_event w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="" id="${item.id}">
+    <input type="button" class="w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="" id="${item.id}">
     </li>`;
     if(e.target.value === "全部"){
       // btn 樣式
@@ -156,29 +73,55 @@ js_filter.addEventListener("click",function(e){
   js_list.innerHTML = str_all;
 })
 
-
-
-// 完成打勾
+// 監聽 => 完成打勾
 js_list.addEventListener("click",function(e){
   if(e.target.type === "checkbox"){
     data.forEach(function(item){
       let judge = e.target.getAttribute("finish") === 'false' ? false : true;
 
+      // 比對 dom & data 狀態
       if(judge === item.finish){
+        // 用 id 指定修改哪一筆
         if(Number(e.target.getAttribute("id")) === item.id){
           item.finish = !item.finish;
           let id = item.id;
           updateData(id,item.finish);
-          
         }
+      }
+      // 修改樣式：checkbox 打勾
+      if(item.finish === true){
+        // e.target.setAttribute("checked", "checked");
+        // console.log(e.target);
       }
     })
   }
 })
 
-// 修改 axios (finish 狀態)
+// 監聽 => 刪除指定資料
+js_list.addEventListener("click",function(e){
+  data.forEach(function(item){
+    if(e.target.type === "button"){
+      if(Number(e.target.getAttribute("id")) === item.id){
+        id = item.id;
+        delete_todo(id)
+      }
+    }
+  })
+})
+// 監聽 => 刪除全部資料(未完成)
+// js_footer.addEventListener("click",function(e){
+//   console.log(e.target.type);
+  // data.forEach(function(item){
+  //   if(e.target.type === "button"){
+  //     id = item.id;
+  //     delete_todo(id)
+  //   }
+  // })
+// })
+
+// 函式 => axios 修改 finish
 function updateData (id,check){
-  // 為什麼使用這個函式時，沒有寫到 check 函式也可以動 (165行)
+  // 為什麼使用這個函式時，沒有寫到 check 函式也可以動
   axios
   .patch(`https://fathomless-brushlands-42339.herokuapp.com/todo1/${id}`, {
     finish: check,
@@ -191,25 +134,68 @@ function updateData (id,check){
   })
 }
 
-// 刪除指定資料
-js_list.addEventListener("click",function(e){
+// 函式 => axios 抓資料
+function get_axios (){
+  axios
+  .get("https://fathomless-brushlands-42339.herokuapp.com/todo1")
+  .then(function (response) {
+    data = response.data;
+    callData();
+    init();
+  });
+}
+
+// 函式 => axios 推資料
+function post_todo(obj){
+  axios
+  .post("https://fathomless-brushlands-42339.herokuapp.com/todo1",obj)
+  .then(function (response) {
+    get_axios()
+    callData();
+  });
+}
+
+// 函式 => axios 刪除資料
+function delete_todo(id){
+  axios
+  .delete(`https://fathomless-brushlands-42339.herokuapp.com/todo1/${id}`)
+  .then(function(response){
+    get_axios ();
+    // callData();
+  });
+}
+
+// 函式 => console axios 資料
+function callData() {
+  console.log(data);
+}
+
+// 函式 => DOM 待辦清單
+function init(){
+  let str_all = "";
+  // 列表
   data.forEach(function(item){
-    if(e.target.type === "button"){
-      if(Number(e.target.getAttribute("id")) === item.id){
-        id = item.id;
-        delete_todo(id)
-      }
+    str = `<li class="flex items-center space-x-4 py-4 mx-6 border-b border-b-light_gray">
+      <input type="checkbox" class="w-5 h-5 rounded-md border border-secondary" name="check" finish="${item.finish}" id="${item.id}">
+      <p class="js_finish text-sm grow">${item.content}</p>
+      <input type="button" class="w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="" id="${item.id}">
+      </li>`
+    str_all += str;
+
+    // 決定樣式
+    if(item.finish === true){
+      // <p> 樣式
+      // js_finish.setAttribute("class","js_finish text-sm grow text-third line-through");
+
+      // checkbox 樣式
+      // .setAttribute("checked", "checked"); 
     }
   })
-})
+  js_list.innerHTML = str_all;
+  // 左下角 total
+  js_total.textContent = `${data.length} 個待完成項目`
+}
 
-// 刪除全部資料
-// js_footer.addEventListener("click",function(e){
-//   console.log(e.target.type);
-  // data.forEach(function(item){
-  //   if(e.target.type === "button"){
-  //     id = item.id;
-  //     delete_todo(id)
-  //   }
-  // })
-// })
+
+// JWT 用箭頭函式，不能用 forEach，用 map()、filter() 處理
+// 物件包函式 => vue react 常見用法
