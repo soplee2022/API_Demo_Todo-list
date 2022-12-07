@@ -39,8 +39,8 @@ js_filter.addEventListener("click",function(e){
   // console.log(e.target.value);
   data.forEach(function(item){
     str = `<li class="flex items-center space-x-4 py-4 mx-6 border-b border-b-light_gray">
-    <input type="checkbox" class="w-5 h-5 rounded-md border border-secondary" name="check" finish="${item.finish}" id="${item.id}">
-    <p class="js_finish text-sm grow">${item.content}</p>
+    <input type="checkbox" ${item.finish && 'checked'} class="w-5 h-5 rounded-md border border-secondary" name="check" finish="${item.finish}" id="${item.id}">
+    <p class="text-sm grow ${ item.finish && 'line-through text-third'}">${item.content}</p>
     <input type="button" class="w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="" id="${item.id}">
     </li>`;
     if(e.target.value === "全部"){
@@ -176,8 +176,8 @@ function init(){
   // 列表
   data.forEach(function(item){
     str = `<li class="flex items-center space-x-4 py-4 mx-6 border-b border-b-light_gray">
-      <input type="checkbox" class="w-5 h-5 rounded-md border border-secondary" name="check" finish="${item.finish}" id="${item.id}">
-      <p class="js_finish text-sm grow">${item.content}</p>
+      <input type="checkbox" ${item.finish && 'checked'} class="w-5 h-5 rounded-md border border-secondary" name="check" finish="${item.finish}" id="${item.id}">
+      <p class="js_finish text-sm grow ${ item.finish && 'line-through text-third'}">${item.content}</p>
       <input type="button" class="w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="" id="${item.id}">
       </li>`
     str_all += str;
