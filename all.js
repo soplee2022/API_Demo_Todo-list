@@ -36,14 +36,15 @@ add_event.addEventListener("click",function(e){
 // 監聽 => 篩選待辦事項
 js_filter.addEventListener("click",function(e){
   let str_all = "";
-  // console.log(e.target.value);
   data.forEach(function(item){
     str = `<li class="flex items-center space-x-4 py-4 mx-6 border-b border-b-light_gray">
     <input type="checkbox" ${item.finish && 'checked'} class="w-5 h-5 rounded-md border border-secondary" name="check" finish="${item.finish}" id="${item.id}">
     <p class="text-sm grow ${ item.finish && 'line-through text-third'}">${item.content}</p>
     <input type="button" class="w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="" id="${item.id}">
     </li>`;
+
     if(e.target.value === "全部"){
+      
       // btn 樣式
       js_btn.setAttribute("class","py-4 border-b-2 border-b-black w-full text-center text-secondary text-sm font-bold")
       js_btn_false.setAttribute("class","py-4 border-b-2 border-b-light_gray w-full text-center text-third text-sm font-bold")
@@ -73,6 +74,8 @@ js_filter.addEventListener("click",function(e){
   js_list.innerHTML = str_all;
 })
 
+// className = `{${e.target.value === "全部" ? 'py-4 border-b-2 border-b-black w-full text-center text-secondary text-sm font-bold' : 'py-4 border-b-2 border-b-light_gray w-full text-center text-third text-sm font-bold'} }`
+
 // 監聽 => 完成打勾
 js_list.addEventListener("click",function(e){
   if(e.target.type === "checkbox"){
@@ -87,11 +90,6 @@ js_list.addEventListener("click",function(e){
           let id = item.id;
           updateData(id,item.finish);
         }
-      }
-      // 修改樣式：checkbox 打勾
-      if(item.finish === true){
-        // e.target.setAttribute("checked", "checked");
-        // console.log(e.target);
       }
     })
   }
@@ -173,6 +171,7 @@ function callData() {
 // 函式 => DOM 待辦清單
 function init(){
   let str_all = "";
+  let todoNum = 0;
   // 列表
   data.forEach(function(item){
     str = `<li class="flex items-center space-x-4 py-4 mx-6 border-b border-b-light_gray">
@@ -181,21 +180,60 @@ function init(){
       <input type="button" class="w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="" id="${item.id}">
       </li>`
     str_all += str;
-
-    // 決定樣式
-    if(item.finish === true){
-      // <p> 樣式
-      // js_finish.setAttribute("class","js_finish text-sm grow text-third line-through");
-
-      // checkbox 樣式
-      // .setAttribute("checked", "checked"); 
-    }
+    item.finish === false && todoNum++;
   })
   js_list.innerHTML = str_all;
   // 左下角 total
-  js_total.textContent = `${data.length} 個待完成項目`
+
+  js_total.textContent = `${todoNum} 個待完成項目`
+
 }
 
 
 // JWT 用箭頭函式，不能用 forEach，用 map()、filter() 處理
 // 物件包函式 => vue react 常見用法
+
+// 函式 => 註冊 API
+const _url = "https://todoo.5xcamp.us";
+let jwt = "";
+
+const signUp = (email, nickname, password) => {
+  axios.post(`${_url}/users`,{
+    "user": {
+      email,
+      nickname,
+      password
+    }
+  })
+    .then(res =>{
+      console.log(res.data);
+      jwt = res.headers.authorization;
+    })
+}
+
+// 函式 => 登入
+const log_in = (email, password) => {
+  axios.post(`${_url}/users/sign_in`,
+    {
+      "user": {
+        email,
+        password
+      }
+  })
+  .then(res => {
+    console.log(res.data);
+    jwt = res.headers.authorization;
+  })
+}
+
+// 函式 => 顯示 todo list
+const getTodo = () => {
+  axios.get(`${_url}/todos`,{
+    headers: { 
+      'Authorization': jwt,
+    }
+  })
+  .then(res => {
+    console.log(res.data);
+  })
+}

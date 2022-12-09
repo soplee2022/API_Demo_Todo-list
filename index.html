@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="./dist/output.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- <script src="all.js"></script> -->
 </head>
 
 <body class="bg-primary md:bgLiner h-[100vh]">
@@ -14,7 +16,7 @@
       <img class="h-7" src="./src/todoList_image/title.svg" alt="">
       <div class="flex items-center">
         <div class="hidden md:block">
-          <p class="text-base font-bold mr-6">菲菲的代辦</p>
+          <p class="text-base font-bold mr-6">菲菲的待辦</p>
         </div>
         <a href="#" class="text-sm md:!text-[16px]">登出</a>
       </div>
@@ -36,7 +38,6 @@
       <ul class="flex w-full flex-col justify-around">
         <ul class="js_list flex w-full flex-col justify-around">
         <!-- event from all.js -->
-        <li></li>
         </ul>
         <li class="js_footer flex items-center justify-between py-6 mx-6 ">
           <p class="js_total text-sm">0 個待完成項目</p>
