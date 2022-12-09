@@ -176,64 +176,13 @@ function init(){
   data.forEach(function(item){
     str = `<li class="flex items-center space-x-4 py-4 mx-6 border-b border-b-light_gray">
       <input type="checkbox" ${item.finish && 'checked'} class="w-5 h-5 rounded-md border border-secondary" name="check" finish="${item.finish}" id="${item.id}">
-      <p class="js_finish text-sm grow ${ item.finish && 'line-through text-third'}">${item.content}</p>
+      <p class="js_finish text-sm grow ${item.finish && 'line-through text-third'}">${item.content}</p>
       <input type="button" class="w-7 h-6 bg-[url('../src/todoList_image/icon_delete_black.svg')] bg-no-repeat " value="" id="${item.id}">
       </li>`
     str_all += str;
-    item.finish === false && todoNum++;
+    !item.finish && todoNum++;
   })
   js_list.innerHTML = str_all;
   // 左下角 total
-
   js_total.textContent = `${todoNum} 個待完成項目`
-
-}
-
-
-// JWT 用箭頭函式，不能用 forEach，用 map()、filter() 處理
-// 物件包函式 => vue react 常見用法
-
-// 函式 => 註冊 API
-const _url = "https://todoo.5xcamp.us";
-let jwt = "";
-
-const signUp = (email, nickname, password) => {
-  axios.post(`${_url}/users`,{
-    "user": {
-      email,
-      nickname,
-      password
-    }
-  })
-    .then(res =>{
-      console.log(res.data);
-      jwt = res.headers.authorization;
-    })
-}
-
-// 函式 => 登入
-const log_in = (email, password) => {
-  axios.post(`${_url}/users/sign_in`,
-    {
-      "user": {
-        email,
-        password
-      }
-  })
-  .then(res => {
-    console.log(res.data);
-    jwt = res.headers.authorization;
-  })
-}
-
-// 函式 => 顯示 todo list
-const getTodo = () => {
-  axios.get(`${_url}/todos`,{
-    headers: { 
-      'Authorization': jwt,
-    }
-  })
-  .then(res => {
-    console.log(res.data);
-  })
 }
